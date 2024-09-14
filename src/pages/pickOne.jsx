@@ -3,6 +3,7 @@ import ParentComponent from "./ParentComponent";
 
 function PickOne() {
     return (
+        
         <>
             <div className="bg-gradient-to-b from-purple-500 to-purple-700 p-4">
                 {/* Main Container */}
