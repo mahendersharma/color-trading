@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+:root {
+  --edm--color--Pick6: #00B760; /* Custom color */
+}
+
+body {
+  font-family: sans-serif;
+}
