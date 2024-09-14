@@ -2,44 +2,28 @@ import React, { useState } from 'react';
 import { Col, Button, Card } from 'reactstrap';
 
 const NumberingButtons = ({ onRemove, onUpdate }) => {
-  const [selectedValues, setSelectedValues] = useState([]);
+  const [selectedValue, setSelectedValue] = useState(null);
 
   const handleAutoSelectClick = () => {
-    const randomValues = generateRandomValues();
-    setSelectedValues(randomValues);
-    onUpdate(randomValues);
+    const randomValue = generateRandomValue();
+    setSelectedValue(randomValue);
+    onUpdate([randomValue]);
   };
 
   const handleButtonClick = (value) => {
-    let updatedSelectedValues;
-
-    if (selectedValues.includes(value)) {
-      updatedSelectedValues = selectedValues.filter(
-        (selectedValue) => selectedValue !== value
-      );
-    } else {
-      updatedSelectedValues = [...selectedValues, value];
-    }
-
-    updatedSelectedValues = updatedSelectedValues.slice(0, 6);
-    setSelectedValues(updatedSelectedValues);
-    onUpdate(updatedSelectedValues);
+    console.log("value",value)
+    const updatedValue = selectedValue === value ? null : value;
+    setSelectedValue(updatedValue);
+    onUpdate(updatedValue ? [updatedValue] : []);
   };
 
   const handleClearClick = () => {
-    setSelectedValues([]);
+    setSelectedValue(null);
     onUpdate([]);
   };
 
-  const generateRandomValues = () => {
-    const randomValues = [];
-    while (randomValues.length < 6) {
-      const randomValue = Math.floor(Math.random() * 39) + 1;
-      if (!randomValues.includes(randomValue)) {
-        randomValues.push(randomValue);
-      }
-    }
-    return randomValues;
+  const generateRandomValue = () => {
+    return Math.floor(Math.random() * 39) + 1;
   };
 
   return (
@@ -67,10 +51,9 @@ const NumberingButtons = ({ onRemove, onUpdate }) => {
             <Button
               key={value}
               onClick={() => handleButtonClick(value)}
-              disabled={selectedValues.length >= 6 && !selectedValues.includes(value)}
               className={`rounded-full p-2 text-xl font-bold transition-all duration-300 
-              ${selectedValues.includes(value) ? 'bg-purple-400 text-white' : 'bg-white text-black'}
-              ${selectedValues.includes(value) ? 'hover:bg-purple-500' : 'hover:bg-gray-200'}
+              ${selectedValue === value ? 'bg-purple-400 text-white' : 'bg-white text-black'}
+              ${selectedValue === value ? 'hover:bg-purple-500' : 'hover:bg-gray-200'}
               `}
             >
               {value}
