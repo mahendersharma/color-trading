@@ -3,7 +3,7 @@ import ParentComponent from "./ParentComponent";
 
 function ColorTreading() {
   return (
-    <div> <ParentComponent />
+    <div> <h1>coming</h1>
 </div>
   )
 }

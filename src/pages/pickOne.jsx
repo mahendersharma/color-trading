@@ -1,4 +1,5 @@
 import React from 'react'
+import ParentComponent from "./ParentComponent";
 
 function PickOne() {
     return (
@@ -88,15 +89,23 @@ function PickOne() {
                 </div>
 
 
-                
+
             </div>
 
             <div className="border-t mt-8 py-4 text-center bg-white">
-                    <div className="flex justify-center space-x-4 text-black text-4xl font-semibold tracking-tight">
-                        Buy Now
-                    </div>
+                <div className="flex justify-center space-x-4 text-black text-4xl font-semibold tracking-tight">
+                    Buy Now
+                </div>
             </div>
-                
+
+
+
+            <div className="min-h-screen  p-8 flex justify-center items-center bg-gradient-to-b from-purple-500 to-purple-700 p-4 ">
+                <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-4xl">
+                    <ParentComponent />
+                </div>
+            </div>
+
         </>
     )
 }

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Col, Button, Card } from 'reactstrap';
-import '../../src/NumberingButtons.css'; // Import the CSS file
 
 const NumberingButtons = ({ onRemove, onUpdate }) => {
   const [selectedValues, setSelectedValues] = useState([]);
@@ -9,7 +8,6 @@ const NumberingButtons = ({ onRemove, onUpdate }) => {
     const randomValues = generateRandomValues();
     setSelectedValues(randomValues);
     onUpdate(randomValues);
-    console.log('Selected Values:', randomValues);
   };
 
   const handleButtonClick = (value) => {
@@ -26,13 +24,11 @@ const NumberingButtons = ({ onRemove, onUpdate }) => {
     updatedSelectedValues = updatedSelectedValues.slice(0, 6);
     setSelectedValues(updatedSelectedValues);
     onUpdate(updatedSelectedValues);
-    console.log('Selected Values:', updatedSelectedValues);
   };
 
   const handleClearClick = () => {
     setSelectedValues([]);
     onUpdate([]);
-    console.log('Selected Values cleared');
   };
 
   const generateRandomValues = () => {
@@ -49,20 +45,72 @@ const NumberingButtons = ({ onRemove, onUpdate }) => {
   return (
     <>
       <Col lg="12">
-        <div className="button-bar">
-          <Button onClick={handleAutoSelectClick}>
-            <i className="fa fa-random" /> Auto Select
+        <div style={{
+          display: 'flex',
+          justifyContent: 'flex-start',
+          backgroundColor: 'rgb(183 162 229 / 86%)',
+          padding: '10px',
+          borderRadius: '10px',
+          marginBottom: '10px'
+        }}>
+          <Button
+            style={{
+              borderRadius: '10px',
+              marginRight: '10px',
+              fontSize: '16px',
+              backgroundColor: '#ffffff',
+              color: 'rgb(183 162 229 / 86%)',
+              borderRadius: '50%',
+              margin: '9px',
+              width: '60px',
+              height: '60px',
+              fontSize: '18px',
+            }}
+            onClick={handleAutoSelectClick}
+          >
+           <i className="fa fa-random" />
           </Button>
-          <Button onClick={handleClearClick}>
-            Clear All
+          <Button
+            style={{
+              borderRadius: '10px',
+              backgroundColor: '#ffffff',
+              color: 'rgb(183 162 229 / 86%)',
+              borderRadius: '50%',
+              margin: '9px',
+              width: '60px',
+              height: '60px',
+              fontSize: '18px',
+            }}
+            onClick={handleClearClick}
+          >
+            <i class="fa fa-times" aria-hidden="true"></i>
           </Button>
         </div>
-        <Card className="shadow card">
+        <Card style={{
+          backgroundColor: 'white',
+          borderRadius: '10px',
+          padding: '15px',
+          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(8, 1fr)',
+          gap: '10px'
+        }}>
           {Array.from({ length: 39 }, (_, index) => index + 1).map((value) => (
             <Button
               key={value}
               onClick={() => handleButtonClick(value)}
-              color={selectedValues.includes(value) ? 'danger' : 'white'}
+              disabled={selectedValues.length >= 6 && !selectedValues.includes(value)}
+              style={{
+                borderRadius: '50%',
+                margin: '9px',
+                width: '60px',
+                height: '60px',
+                fontSize: '18px',
+                color: selectedValues.includes(value) ? 'white' : 'black',
+                backgroundColor: selectedValues.includes(value) ? 'rgb(183 162 229 / 86%)' : 'white',
+                border: '2px solid #ddd',
+                transition: 'background-color 0.3s ease, color 0.3s ease',
+              }}
             >
               {value}
             </Button>
