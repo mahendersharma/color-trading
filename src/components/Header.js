@@ -13,6 +13,8 @@ const navigation = [
   { name: 'Color Treading', href: '/color-treading', current: false },
   { name: 'Register', href: '/registartion-Form', current: false },
   { name: 'Sign In', href: '/sign-in', current: false },
+  { name: 'Personal Details', href: '/personal-details', current: false },
+
 ];
 
 const userNavigation = [
