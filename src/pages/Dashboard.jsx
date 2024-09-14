@@ -7,7 +7,7 @@ function Dashboard() {
     <>
     <div className='mx-auto max-w-7xl px-2 py-3 sm:px-3 lg:px-4'>
     <Slider/>
-    <Selected/>
+    {/* <Selected/> */}
     </div>
     </>
   )

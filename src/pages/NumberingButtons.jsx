@@ -45,72 +45,33 @@ const NumberingButtons = ({ onRemove, onUpdate }) => {
   return (
     <>
       <Col lg="12">
-        <div style={{
-          display: 'flex',
-          justifyContent: 'flex-start',
-          backgroundColor: 'rgb(183 162 229 / 86%)',
-          padding: '10px',
-          borderRadius: '10px',
-          marginBottom: '10px'
-        }}>
+        {/* Buttons for Auto-select and Clear */}
+        <div className="flex justify-start bg-purple-200 bg-opacity-75 p-2 rounded-lg mb-4">
           <Button
-            style={{
-              borderRadius: '10px',
-              marginRight: '10px',
-              fontSize: '16px',
-              backgroundColor: '#ffffff',
-              color: 'rgb(183 162 229 / 86%)',
-              borderRadius: '50%',
-              margin: '9px',
-              width: '60px',
-              height: '60px',
-              fontSize: '18px',
-            }}
+            className="mr-2 rounded-full bg-white text-purple-400 hover:bg-purple-400 hover:text-white transition-all duration-300 w-14 h-14 flex items-center justify-center"
             onClick={handleAutoSelectClick}
           >
-           <i className="fa fa-random" />
+            <i className="fa fa-random" />
           </Button>
           <Button
-            style={{
-              borderRadius: '10px',
-              backgroundColor: '#ffffff',
-              color: 'rgb(183 162 229 / 86%)',
-              borderRadius: '50%',
-              margin: '9px',
-              width: '60px',
-              height: '60px',
-              fontSize: '18px',
-            }}
+            className="rounded-full bg-white text-purple-400 hover:bg-purple-400 hover:text-white transition-all duration-300 w-14 h-14 flex items-center justify-center"
             onClick={handleClearClick}
           >
-            <i class="fa fa-times" aria-hidden="true"></i>
+            <i className="fa fa-times" aria-hidden="true" />
           </Button>
         </div>
-        <Card style={{
-          backgroundColor: 'white',
-          borderRadius: '10px',
-          padding: '15px',
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(8, 1fr)',
-          gap: '10px'
-        }}>
+
+        {/* Number Grid */}
+        <Card className="bg-white rounded-lg p-4 shadow-md grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
           {Array.from({ length: 39 }, (_, index) => index + 1).map((value) => (
             <Button
               key={value}
               onClick={() => handleButtonClick(value)}
               disabled={selectedValues.length >= 6 && !selectedValues.includes(value)}
-              style={{
-                borderRadius: '50%',
-                margin: '9px',
-                width: '60px',
-                height: '60px',
-                fontSize: '18px',
-                color: selectedValues.includes(value) ? 'white' : 'black',
-                backgroundColor: selectedValues.includes(value) ? 'rgb(183 162 229 / 86%)' : 'white',
-                border: '2px solid #ddd',
-                transition: 'background-color 0.3s ease, color 0.3s ease',
-              }}
+              className={`rounded-full p-2 text-xl font-bold transition-all duration-300 
+              ${selectedValues.includes(value) ? 'bg-purple-400 text-white' : 'bg-white text-black'}
+              ${selectedValues.includes(value) ? 'hover:bg-purple-500' : 'hover:bg-gray-200'}
+              `}
             >
               {value}
             </Button>
