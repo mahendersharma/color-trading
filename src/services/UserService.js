@@ -3,9 +3,11 @@ import http from './HttpService';
 
 const END_POINT = 'user-router';
 
-const login = (data)=> {
-  return axios.post(`${process.env.REACT_APP_BASE_URL}/${END_POINT}/login-user`, data);
-}
+const BASE_URL = process.env.REACT_APP_BASE_URL || 'https://newsapplication-4-w2e0.onrender.com/api/admin/v1';
+
+const login = (data) => {
+  return axios.post(`${BASE_URL}/${END_POINT}/login-user`, data);
+};
 
 const registration = (data)=> {
     return axios.post(`${process.env.REACT_APP_BASE_URL}/${END_POINT}/register`, data);
