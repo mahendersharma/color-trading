@@ -10,13 +10,24 @@ const BASE_URL= process.env.REACT_APP_BASE_URL;
           }
     });
 
-    dashboardAxios.interceptors.request.use((config)=>{
-        const authToken = JSON.parse(localStorage.getItem('token'))
-        config.headers.common.Authorization = `Bearer ${authToken}`
-        return config
-    },(error)=>{
-        return Promise.reject(error)
+    dashboardAxios.interceptors.request.use((config) => {
+        const authToken = localStorage.getItem('authToken'); // Get the token as a string
+        console.log("authToken", authToken); // Log the token for debugging
+    
+        if (authToken) {
+            // Ensure headers object exists
+            if (!config.headers) {
+                config.headers = {};
+            }
+            config.headers.Authorization = `Bearer ${authToken}`;
+        }
+    
+        return config;
+    }, (error) => {
+        return Promise.reject(error);
     });
+    
+    
 
     dashboardAxios.interceptors.response.use((response)=>{
         return response

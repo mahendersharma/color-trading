@@ -1,8 +1,17 @@
 export const saveUserToLocalStorage = (user, token) => {
-    window.localStorage.setItem('user', JSON.stringify(user))
-    window.localStorage.setItem('token', JSON.stringify(token))
+    try {
+        window.localStorage.setItem('user', JSON.stringify(user));
+        window.localStorage.setItem('token', token); // Store token as a string
+    } catch (error) {
+        console.error("Failed to save user to local storage:", error);
+    }
 }
+
 export const removeUserFromLocalStorage = () => {
-    window.localStorage.removeItem('user')
-    window.localStorage.removeItem('token')
+    try {
+        window.localStorage.removeItem('user');
+        window.localStorage.removeItem('token');
+    } catch (error) {
+        console.error("Failed to remove user from local storage:", error);
+    }
 }

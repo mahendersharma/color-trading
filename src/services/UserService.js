@@ -21,9 +21,17 @@ const logout = (data)=> {
 const changeAdminOwnPassword = (id, data)=>{
   return axios.patch(`${process.env.REACT_APP_BASE_URL}/change-password`, data);
 }
+
+const getProfile = async () => {
+  const response = await http.get(`${BASE_URL}/${END_POINT}/get-current-user`);
+  return response.data; 
+};
+
+
 export default {
   login,
   registration,
   changeAdminOwnPassword,
-  logout
+  logout,
+  getProfile
 };

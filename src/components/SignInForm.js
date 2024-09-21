@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import UserService from "../services/UserService";
+import UserService from "../services/UserService"; // Make sure UserService has the login function
 import { useDispatch } from "react-redux";
 import { login } from "../store/authSlice";
 import { useNavigate } from "react-router-dom";
@@ -7,20 +7,22 @@ import { useNavigate } from "react-router-dom";
 const SignInForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false); // Track loading state
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setLoading(true); // Start loader
+    setLoading(true);
 
     try {
-      const response = await UserService.login({ email, password }); // Call your login API
+      const response = await UserService.login({ email, password });
 
       if (response.status === 200) {
-        console.log("response.data.email", response.data);
-        dispatch(login({ user: response.data })); // Dispatch login action with user data
+        const { accessToken, user } = response.data.data; // Adjusted based on your backend response
+        console.log("accessToken",accessToken)
+        dispatch(login({ user })); // Store user information in Redux
+        localStorage.setItem('authToken', accessToken); // Store the access token
         navigate('/'); // Redirect to home after login
       } else {
         alert('Invalid credentials');
@@ -29,7 +31,7 @@ const SignInForm = () => {
       alert('Invalid credentials'); // Handle error
       console.error(error);
     } finally {
-      setLoading(false); // Stop loader
+      setLoading(false);
     }
   };
 
@@ -72,7 +74,7 @@ const SignInForm = () => {
                   className={`mt-5 tracking-wide font-semibold w-full py-4 rounded-lg transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none 
                     ${loading ? 'bg-blue-900' : 'bg-blue-900 hover:bg-indigo-700'} 
                     ${(!email || !password || loading) ? 'bg-gray-300 cursor-not-allowed' : ''}`}
-                  disabled={!email || !password || loading} // Disable if email/password is empty or loading
+                  disabled={!email || !password || loading}
                 >
                   {loading ? (
                     <svg
@@ -92,7 +94,7 @@ const SignInForm = () => {
                       <path
                         className="opacity-75"
                         fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                        d="M4 12a8 8 0 008-8V0C5.373 0 0 5.373 0 12h4z"
                       ></path>
                     </svg>
                   ) : (
