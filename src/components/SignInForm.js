@@ -1,5 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { login } from "../store/authSlice";
+import { useNavigate } from "react-router-dom";
+
 const SingInForm = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+
+    // Example: Authenticate user (replace with real logic)
+    if (email === 'user@example.com' && password === 'password') {
+      dispatch(login({ email })); // Dispatch login action
+      navigate('/'); // Redirect to home after login
+    } else {
+      alert('Invalid credentials');
+    }
+  };
+
   return (
     <div className="h-[100vh] items-center flex justify-center px-5 lg:px-0">
       <div className="max-w-screen-xl bg-white border shadow sm:rounded-lg flex justify-center flex-1">
@@ -12,34 +33,39 @@ const SingInForm = () => {
           ></div>
         </div>
         <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
-          <div className=" flex flex-col items-center">
+          <div className="flex flex-col items-center">
             <div className="text-center">
               <h1 className="text-2xl xl:text-4xl font-extrabold text-blue-900">
-                 Sign In
+                Sign In
               </h1>
-             
             </div>
-            <div className="w-full flex-1 mt-8">
+            <form className="w-full flex-1 mt-8" onSubmit={handleLogin}>
               <div className="mx-auto max-w-xs flex flex-col gap-4">
-               
                 <input
                   className="w-full px-5 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                   type="email"
-                  placeholder="Username phone or email *"
+                  placeholder="Email *"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
                 <input
                   className="w-full px-5 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                   type="password"
                   placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
-                <button className="mt-5 tracking-wide font-semibold bg-blue-900 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
+                <button
+                  type="submit"
+                  className="mt-5 tracking-wide font-semibold bg-blue-900 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
+                >
                   <svg
                     className="w-6 h-6 -ml-2"
                     fill="none"
                     stroke="currentColor"
-                    stroke-width="2"
+                    strokeWidth="2"
                     strokeLinecap="round"
-                    stroke-linejoin="round"
+                    strokeLinejoin="round"
                   >
                     <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
                     <circle cx="8.5" cy="7" r="4" />
@@ -48,19 +74,21 @@ const SingInForm = () => {
                   <span className="ml-3">Sign In</span>
                 </button>
                 <p className="mt-6 text-xs text-gray-600 text-center">
-                Not a member?
-                {" "}
-                  <a href="/registartion-Form">
+                  Not a member?
+                  {" "}
+                  <a href="/registration-form">
                     <span className="text-blue-900 font-semibold">
-                    Create Account</span>
+                      Create Account
+                    </span>
                   </a>
                 </p>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </div>
     </div>
   );
 };
+
 export default SingInForm;
