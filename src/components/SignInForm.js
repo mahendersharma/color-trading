@@ -4,29 +4,32 @@ import { useDispatch } from "react-redux";
 import { login } from "../store/authSlice";
 import { useNavigate } from "react-router-dom";
 
-const SingInForm = () => {
+const SignInForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false); // Track loading state
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-  
+    setLoading(true); // Start loader
+
     try {
       const response = await UserService.login({ email, password }); // Call your login API
-      
-      // Assuming response contains user data
+
       if (response.status === 200) {
-        console.log("response.data.email",response.data)
-        dispatch(login({ user: response.data})); // Dispatch login action with user data
+        console.log("response.data.email", response.data);
+        dispatch(login({ user: response.data })); // Dispatch login action with user data
         navigate('/'); // Redirect to home after login
       } else {
         alert('Invalid credentials');
       }
     } catch (error) {
-      alert('Invalid credentials'); // Handle error (you can improve this by checking error type)
-      console.error(error); // Log the error for debugging
+      alert('Invalid credentials'); // Handle error
+      console.error(error);
+    } finally {
+      setLoading(false); // Stop loader
     }
   };
 
@@ -66,25 +69,52 @@ const SingInForm = () => {
                 />
                 <button
                   type="submit"
-                  className="mt-5 tracking-wide font-semibold bg-blue-900 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
+                  className={`mt-5 tracking-wide font-semibold w-full py-4 rounded-lg transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none 
+                    ${loading ? 'bg-blue-900' : 'bg-blue-900 hover:bg-indigo-700'} 
+                    ${(!email || !password || loading) ? 'bg-gray-300 cursor-not-allowed' : ''}`}
+                  disabled={!email || !password || loading} // Disable if email/password is empty or loading
                 >
-                  <svg
-                    className="w-6 h-6 -ml-2"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                    <circle cx="8.5" cy="7" r="4" />
-                    <path d="M20 8v6M23 11h-6" />
-                  </svg>
-                  <span className="ml-3">Sign In</span>
+                  {loading ? (
+                    <svg
+                      className="animate-spin h-5 w-5 mr-3 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                      ></path>
+                    </svg>
+                  ) : (
+                    <>
+                      <svg
+                        className="w-6 h-6 -ml-2"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                        <circle cx="8.5" cy="7" r="4" />
+                        <path d="M20 8v6M23 11h-6" />
+                      </svg>
+                      <span className="ml-3">Sign In</span>
+                    </>
+                  )}
                 </button>
                 <p className="mt-6 text-xs text-gray-600 text-center">
-                  Not a member?
-                  {" "}
+                  Not a member?{" "}
                   <a href="/registration-form">
                     <span className="text-blue-900 font-semibold">
                       Create Account
@@ -100,4 +130,4 @@ const SingInForm = () => {
   );
 };
 
-export default SingInForm;
+export default SignInForm;

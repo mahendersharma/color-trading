@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Disclosure, Menu } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { logout } from "../store/authSlice";
 
 const userNavigation = [
@@ -18,7 +18,8 @@ export default function Header() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { isAuthenticated, user } = useSelector((state) => state.auth);
-console.log("user",user)
+  const location = useLocation(); // Get the current path
+  
   const balance = 5000;
   const expenses = 1500;
 
@@ -27,12 +28,12 @@ console.log("user",user)
     navigate("/login", { replace: true });
   };
 
-  const publicNavigation = [{ name: "Dashboard", href: "/", current: true }];
+  const publicNavigation = [{ name: "Dashboard", href: "/" }];
 
   const privateNavigation = [
-    { name: "Pick 1", href: "/pick-one", current: false },
-    { name: "Color Treading", href: "/color-treading", current: false },
-    { name: "Personal Details", href: "/personal-details", current: false },
+    { name: "Pick 1", href: "/pick-one" },
+    { name: "Color Treading", href: "/color-treading" },
+    { name: "Personal Details", href: "/personal-details" },
   ];
 
   return (
@@ -54,9 +55,9 @@ console.log("user",user)
                     <Link
                       key={item.name}
                       to={item.href}
-                      aria-current={item.current ? "page" : undefined}
+                      aria-current={location.pathname === item.href ? "page" : undefined}
                       className={classNames(
-                        item.current
+                        location.pathname === item.href
                           ? "bg-gray-900 text-white"
                           : "text-gray-300 hover:bg-gray-700 hover:text-white",
                         "rounded-md px-3 py-2 text-sm font-medium"
@@ -70,9 +71,9 @@ console.log("user",user)
                       <Link
                         key={item.name}
                         to={item.href}
-                        aria-current={item.current ? "page" : undefined}
+                        aria-current={location.pathname === item.href ? "page" : undefined}
                         className={classNames(
-                          item.current
+                          location.pathname === item.href
                             ? "bg-gray-900 text-white"
                             : "text-gray-300 hover:bg-gray-700 hover:text-white",
                           "rounded-md px-3 py-2 text-sm font-medium"
@@ -83,6 +84,8 @@ console.log("user",user)
                     ))}
                 </div>
               </div>
+              
+              {/* User Balance and Expenses */}
               {isAuthenticated && (
                 <div className="hidden md:flex items-center space-x-8">
                   <div className="flex flex-col items-end">
@@ -116,9 +119,7 @@ console.log("user",user)
                         <img
                           alt=""
                           className="h-8 w-8 rounded-full"
-                          src={
-                            user?.imageUrl || "https://via.placeholder.com/40"
-                          }
+                          src={user?.imageUrl || "https://via.placeholder.com/40"}
                         />
                       </Menu.Button>
                       <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
@@ -166,6 +167,7 @@ console.log("user",user)
                 </div>
               )}
 
+              {/* Mobile menu button */}
               <div className="-mr-2 flex md:hidden">
                 <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-gray-800 p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                   <span className="sr-only">Open main menu</span>
@@ -186,9 +188,9 @@ console.log("user",user)
                   key={item.name}
                   as={Link}
                   to={item.href}
-                  aria-current={item.current ? "page" : undefined}
+                  aria-current={location.pathname === item.href ? "page" : undefined}
                   className={classNames(
-                    item.current
+                    location.pathname === item.href
                       ? "bg-gray-900 text-white"
                       : "text-gray-300 hover:bg-gray-700 hover:text-white",
                     "block rounded-md px-3 py-2 text-base font-medium"
@@ -203,9 +205,9 @@ console.log("user",user)
                     key={item.name}
                     as={Link}
                     to={item.href}
-                    aria-current={item.current ? "page" : undefined}
+                    aria-current={location.pathname === item.href ? "page" : undefined}
                     className={classNames(
-                      item.current
+                      location.pathname === item.href
                         ? "bg-gray-900 text-white"
                         : "text-gray-300 hover:bg-gray-700 hover:text-white",
                       "block rounded-md px-3 py-2 text-base font-medium"
@@ -215,6 +217,7 @@ console.log("user",user)
                   </Disclosure.Button>
                 ))}
             </div>
+            {/* User panel for mobile */}
             {isAuthenticated && (
               <div className="border-t border-gray-700 pb-3 pt-4">
                 <div className="flex items-center px-5">
