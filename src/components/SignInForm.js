@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import UserService from "../services/UserService";
 import { useDispatch } from "react-redux";
 import { login } from "../store/authSlice";
 import { useNavigate } from "react-router-dom";
@@ -9,15 +10,23 @@ const SingInForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-
-    // Example: Authenticate user (replace with real logic)
-    if (email === 'user@example.com' && password === 'password') {
-      dispatch(login({ email })); // Dispatch login action
-      navigate('/'); // Redirect to home after login
-    } else {
-      alert('Invalid credentials');
+  
+    try {
+      const response = await UserService.login({ email, password }); // Call your login API
+      
+      // Assuming response contains user data
+      if (response.status === 200) {
+        console.log("response.data.email",response.data)
+        dispatch(login({ user: response.data})); // Dispatch login action with user data
+        navigate('/'); // Redirect to home after login
+      } else {
+        alert('Invalid credentials');
+      }
+    } catch (error) {
+      alert('Invalid credentials'); // Handle error (you can improve this by checking error type)
+      console.error(error); // Log the error for debugging
     }
   };
 

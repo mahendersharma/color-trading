@@ -31,7 +31,7 @@ function AddAccount() {
   return (
     <>
       <CommonHeader />
-
+      <div className='mx-auto max-w-7xl px-2 py-3 sm:px-3 lg:px-4'>
       <div className="max-w-lg mx-auto p-8 bg-white shadow-md rounded">
         <h1 className="text-2xl font-bold mb-4">Add Account</h1>
 
@@ -110,6 +110,7 @@ function AddAccount() {
             </button>
           </div>
         </form>
+      </div>
       </div>
     </>
   );

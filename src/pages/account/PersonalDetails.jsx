@@ -3,8 +3,9 @@ import CommonHeader from './CommonHeader'
 function PersonalDetails() {
   return (
     <>
-      <CommonHeader />
-      <div className="min-h-screen p-4 md:p-8 flex justify-center items-center bg-gradient-to-b from-purple-500 to-purple-700">
+    <CommonHeader />
+    <div className='mx-auto max-w-7xl px-2 py-3 sm:px-3 lg:px-4'>
+      <div className="min-h-screen p-4 md:p-8 flex justify-center items-center bg-gradient-to-b from-purple-500 to-purple-700"  style={{borderRadius:'20px'}}>
         <div className="bg-white p-4 md:p-8 rounded-lg shadow-lg w-full max-w-4xl">
 
           <form>
@@ -43,6 +44,8 @@ function PersonalDetails() {
 
         </div>
       </div>
+    </div>
+      
     </>
   )
 }

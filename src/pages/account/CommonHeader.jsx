@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 function CommonHeader() {
   return (
     <>
-      <div className="bg-gradient-to-b from-purple-500 to-purple-700 p-4">
+    
+      <div className="bg-gradient-to-b from-purple-500 to-purple-700 p-4" >
         {/* Main Container */}
         <div className="px-4 py-8">
           <div className="text-center mb-12 md:mb-0">

@@ -18,7 +18,7 @@ export default function Header() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { isAuthenticated, user } = useSelector((state) => state.auth);
-
+console.log("user",user)
   const balance = 5000;
   const expenses = 1500;
 

@@ -5,7 +5,9 @@ function PickOne() {
     return (
         
         <>
-            <div className="bg-gradient-to-b from-purple-500 to-purple-700 p-4">
+        
+        <div className='mx-auto max-w-7xl px-2 py-3 sm:px-3 lg:px-4'>
+        <div className="bg-gradient-to-b from-purple-500 to-purple-700 p-4"  style={{borderRadius:'20px'}}>
                 {/* Main Container */}
                 <div className="flex flex-col md:flex-row justify-between items-center mx-auto max-w-7xl px-4 py-8">
                     
@@ -90,19 +92,19 @@ function PickOne() {
                 </div>
             </div>
 
-            {/* Call to Action */}
-            <div className="border-t mt-8 py-4 text-center bg-white">
+            <div className="border-t mt-8 py-4 text-center bg-white" >
                 <div className="flex justify-center space-x-4 text-black text-2xl md:text-4xl font-semibold tracking-tight">
                     Buy Now
                 </div>
             </div>
 
-            {/* Parent Component Container */}
-            <div className="min-h-screen p-4 md:p-8 flex justify-center items-center bg-gradient-to-b from-purple-500 to-purple-700">
+            <div className="min-h-screen p-4 md:p-8 flex justify-center items-center bg-gradient-to-b from-purple-500 to-purple-700"  style={{borderRadius:'20px'}}>
                 <div className="bg-white p-4 md:p-8 rounded-lg shadow-lg w-full max-w-4xl">
                     <ParentComponent />
                 </div>
             </div>
+    </div>
+            
         </>
     )
 }
