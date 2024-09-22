@@ -4,6 +4,7 @@ import http from './HttpService';
 const END_POINT = 'user-router';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL || 'https://newsapplication-4-w2e0.onrender.com/api/admin/v1';
+// const BASE_URL = process.env.REACT_APP_BASE_URL
 
 const login = (data) => {
   return axios.post(`${BASE_URL}/${END_POINT}/login-user`, data);
