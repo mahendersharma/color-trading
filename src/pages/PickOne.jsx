@@ -3,9 +3,7 @@ import ParentComponent from "./ParentComponent";
 
 function PickOne() {
     return (
-        
         <>
-        
         <div className='mx-auto max-w-7xl px-2 py-3 sm:px-3 lg:px-4'>
         <div className="bg-gradient-to-b from-purple-500 to-purple-700 p-4"  style={{borderRadius:'20px'}}>
                 {/* Main Container */}

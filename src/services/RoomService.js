@@ -9,6 +9,7 @@ const getActiveRooms = async () => {
 };
 
 const participateInRoom = async (roomId, { betPrice, selectedDigit }) => {
+    console.log(roomId, { betPrice, selectedDigit })
     try {
         const response = await dashboardAxios.post(`${END_POINT}/join-room/${roomId}`, {
             betPrice,   
