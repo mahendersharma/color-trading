@@ -1,110 +1,330 @@
-import React from 'react'
-import ParentComponent from "./ParentComponent";
+import React, { useState, useEffect } from "react";
+import { Button, Input, Spinner } from "reactstrap";
+import NumberingButtons from "./NumberingButtons"; // Adjust the import path based on your project structure
+import { io } from "socket.io-client"; // Import socket.io-client
+import api from "../services/RoomService";
 
 function PickOne() {
-    return (
-        <>
-        <div className='mx-auto max-w-7xl px-2 py-3 sm:px-3 lg:px-4'>
-        <div className="bg-gradient-to-b from-purple-500 to-purple-700 p-4"  style={{borderRadius:'20px'}}>
-                {/* Main Container */}
-                <div className="flex flex-col md:flex-row justify-between items-center mx-auto max-w-7xl px-4 py-8">
-                    
-                    {/* Left Side - Logo */}
-                    <div className="flex items-center mb-4 md:mb-0">
-                        <img
-                            style={{ width: '210px' }}
-                            src="https://emiratesdraw.com/assets/multi_game/logo/logo_white_Pick1.png"
-                            alt="Pick1 Logo"
-                            className="w-full h-auto"
-                        />
-                    </div>
+  const [allSelectedValues, setAllSelectedValues] = useState([null]); // Initialize with one component
+  const [betPrice, setBetPrice] = useState(""); // State for bet price input
+  const [loading, setLoading] = useState(false); // State to manage the loader
+  const [room, setRooms] = useState([]); // State for active rooms
+  const [activeRoom, setActiveRoom] = useState(null); // State for active room
+  const socket = io(`${process.env.REACT_APP_BASE_URL}`);
+  const [remainingTime, setRemainingTime] = useState(0); // State for remaining time
 
-                    {/* Middle - Next Draw Countdown */}
-                    <div className="text-center mb-4 md:mb-0">
-                        <p className="text-2xl md:text-4xl font-semibold text-white tracking-tight">
-                            NEXT DRAW
-                        </p>
-                        <p className="text-white text-base md:text-lg mt-1">
-                            Saturday, 14 Sep 2024
-                        </p>
+  const now = new Date();
+  const options = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+  const formattedDate = now.toLocaleDateString("en-US", options); // Format the date
 
-                        <div className="mt-2 flex justify-center space-x-2 md:space-x-4 text-white">
-                            {/* Days Block */}
-                            <div className="flex flex-col items-center">
-                                <div className="bg-white text-purple-600 font-bold text-2xl md:text-4xl px-3 md:px-5 py-1 md:py-2 rounded-md">
-                                    00
-                                </div>
-                                <span className="text-xs md:text-sm mt-1">DAYS</span>
-                            </div>
+  // Fetch rooms and handle real-time updates
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        const response = await api.getActiveRooms();
+        setRooms(response.rooms || []);
+        console.log(room)
+        const active = response.rooms.find((room) => room.status === "open");
+        setActiveRoom(active);
+        if (active) {
+            setRemainingTime(active.remainingTime); // Set initial remaining time
+          }
+      } catch (error) {
+        console.error("Error fetching rooms:", error);
+      }
+    };
 
-                            {/* Separator */}
-                            <div className="flex items-center text-white text-2xl md:text-4xl font-bold">:</div>
+    fetchRooms();
 
-                            {/* Hours Block */}
-                            <div className="flex flex-col items-center">
-                                <div className="bg-white text-purple-600 font-bold text-2xl md:text-4xl px-3 md:px-5 py-1 md:py-2 rounded-md">
-                                    02
-                                </div>
-                                <span className="text-xs md:text-sm mt-1">HOURS</span>
-                            </div>
+    // Listen for real-time room updates
+    socket.on("roomCreated", (newRoom) => {
+        setRooms((prevRooms) => [...prevRooms, newRoom]);
+        if (newRoom.status === "open") {
+          setActiveRoom(newRoom);
+          setRemainingTime(newRoom.remainingTime); // Update remaining time for new room
+        }
+      });
 
-                            {/* Separator */}
-                            <div className="flex items-center text-white text-2xl md:text-4xl font-bold">:</div>
+    socket.on("roomClosed", (closedRoom) => {
+      setRooms((prevRooms) =>
+        prevRooms.map((room) =>
+          room.roomId === closedRoom.roomId ? closedRoom : room
+        )
+      );
+      if (activeRoom && activeRoom.roomId === closedRoom.roomId) {
+        setActiveRoom(null);
+        setRemainingTime(0); // Reset remaining time when the room is closed
+      }
+    });
 
-                            {/* Minutes Block */}
-                            <div className="flex flex-col items-center">
-                                <div className="bg-white text-purple-600 font-bold text-2xl md:text-4xl px-3 md:px-5 py-1 md:py-2 rounded-md">
-                                    32
-                                </div>
-                                <span className="text-xs md:text-sm mt-1">MINUTES</span>
-                            </div>
+    // Request room updates every second
+    const intervalId = setInterval(() => {
+      socket.emit("requestRoomUpdates");
+    }, 1000);
 
-                            {/* Separator */}
-                            <div className="flex items-center text-white text-2xl md:text-4xl font-bold">:</div>
+    // Cleanup the socket connection and interval on unmount
+    return () => {
+      socket.disconnect();
+      clearInterval(intervalId);
+    };
+  }, [socket, activeRoom]);
 
-                            {/* Seconds Block */}
-                            <div className="flex flex-col items-center">
-                                <div className="bg-white text-purple-600 font-bold text-2xl md:text-4xl px-3 md:px-5 py-1 md:py-2 rounded-md">
-                                    27
-                                </div>
-                                <span className="text-xs md:text-sm mt-1">SECONDS</span>
-                            </div>
-                        </div>
-                    </div>
+  const handleAddClick = () => {
+    setAllSelectedValues((prevSelectedValues) => [...prevSelectedValues, null]); // Initialize with null
+  };
 
-                    {/* Right Side - Promotion Text */}
-                    <div className="text-white text-center md:text-right">
-                        <p className="text-base md:text-lg font-bold">Win up to 7x your entry value</p>
-                    </div>
-                </div>
+  const handleRemoveClick = (index) => {
+    if (allSelectedValues.length === 1) {
+      return;
+    }
+    setAllSelectedValues((prevSelectedValues) =>
+      prevSelectedValues.filter((_, i) => i !== index)
+    );
+  };
 
-                {/* Bottom Links */}
-                <div className="border-t border-purple-600 mt-8 py-4 text-center">
-                    <div className="flex flex-wrap justify-center space-x-2 md:space-x-4 text-white text-xs md:text-sm">
-                        <a href="#" className="hover:text-gray-600">Buy Now</a>
-                        <a href="#" className="hover:text-gray-600">Scan Coupon</a>
-                        <a href="#" className="hover:text-gray-600">How to Play</a>
-                        <a href="#" className="hover:text-gray-600">Past Results</a>
-                        <a href="#" className="hover:text-gray-600">Winners</a>
-                    </div>
-                </div>
+  const updateSelectedValues = (index, selectedDigit) => {
+    setAllSelectedValues((prevSelectedValues) => {
+      const newSelectedValues = [...prevSelectedValues];
+      newSelectedValues[index] = selectedDigit; // Update the value directly
+      return newSelectedValues;
+    });
+  };
+
+  const isBuyNowDisabled = () => {
+    const hasSelectedValues = allSelectedValues.some((value) => value !== null); // Check for non-null selections
+    return !hasSelectedValues || !betPrice || betPrice < 10 || betPrice > 10000;
+  };
+
+  const handleBuyNow = async () => {
+    if (isBuyNowDisabled()) {
+      return;
+    }
+
+    setLoading(true); // Show loader when Buy Now is clicked
+
+    try {
+      const selectedDigit = allSelectedValues.find((value) => value !== null); // Get the selected digit
+      await api.participateInRoom(activeRoom.roomId, {
+        betPrice,
+        selectedDigit,
+      });
+      alert("Purchase successful!");
+    } catch (error) {
+      console.error("Error during purchase:", error);
+      alert("There was an issue processing your purchase.");
+    } finally {
+      setLoading(false); // Hide loader after the operation is complete
+    }
+  };
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setRemainingTime((prev) => Math.max(prev - 1000, 0)); // Decrease time by 1 second
+    }, 1000);
+
+    return () => clearInterval(timer); // Cleanup timer on unmount
+  }, [activeRoom]);
+
+  const minutes = Math.floor(remainingTime / 60000);
+  const seconds = Math.floor((remainingTime % 60000) / 1000);
+
+  return (
+    <>
+      <div className="mx-auto max-w-7xl px-2 py-3 sm:px-3 lg:px-4">
+        <div
+          className="bg-gradient-to-b from-purple-500 to-purple-700 p-4"
+          style={{ borderRadius: "20px" }}
+        >
+          {/* Main Container */}
+          <div className="flex flex-col md:flex-row justify-between items-center mx-auto max-w-7xl px-4 py-8">
+            {/* Left Side - Logo */}
+            <div className="flex items-center mb-4 md:mb-0">
+              <img
+                style={{ width: "210px" }}
+                src="https://emiratesdraw.com/assets/multi_game/logo/logo_white_Pick1.png"
+                alt="Pick1 Logo"
+                className="w-full h-auto"
+              />
             </div>
 
-            <div className="border-t mt-8 py-4 text-center bg-white" >
-                <div className="flex justify-center space-x-4 text-black text-2xl md:text-4xl font-semibold tracking-tight">
-                    Buy Now
+            {/* Middle - Next Draw Countdown */}
+            <div className="text-center mb-4 md:mb-0">
+              <p className="text-2xl md:text-4xl font-semibold text-white tracking-tight">
+              {room[0]?.roomId || "Starting"} 
+              </p>
+              <p className="text-white text-base md:text-lg mt-1">
+                {formattedDate} {/* Display current date */}
+              </p>
+
+              <div className="mt-2 flex justify-center space-x-2 md:space-x-4 text-white">
+               
+                <div className="flex flex-col items-center">
+                  <div className="bg-white text-purple-600 font-bold text-2xl md:text-4xl px-3 md:px-5 py-1 md:py-2 rounded-md">
+                    {minutes}
+                  </div>
+                  <span className="text-xs md:text-sm mt-1">MINUTES</span>
                 </div>
+
+                {/* Separator */}
+                <div className="flex items-center text-white text-2xl md:text-4xl font-bold">
+                  :
+                </div>
+
+                {/* Seconds Block */}
+                <div className="flex flex-col items-center">
+                <div className="bg-white text-purple-600 font-bold text-2xl md:text-4xl px-3 md:px-5 py-1 md:py-2 rounded-md">
+                    {seconds}
+                  </div>
+                  <span className="text-xs md:text-sm mt-1">SECONDS</span>
+                </div>
+              </div>
             </div>
 
-            <div className="min-h-screen p-4 md:p-8 flex justify-center items-center bg-gradient-to-b from-purple-500 to-purple-700"  style={{borderRadius:'20px'}}>
-                <div className="bg-white p-4 md:p-8 rounded-lg shadow-lg w-full max-w-4xl">
-                    <ParentComponent />
-                </div>
+            {/* Right Side - Promotion Text */}
+            <div className="text-white text-center md:text-right">
+              <p className="text-base md:text-lg font-bold">
+                Win up to 7x your entry value
+              </p>
             </div>
-    </div>
-            
-        </>
-    )
+          </div>
+
+          {/* Bottom Links */}
+          <div className="border-t border-purple-600 mt-8 py-4 text-center">
+            <div className="flex flex-wrap justify-center space-x-2 md:space-x-4 text-white text-xs md:text-sm">
+              <a href="#" className="hover:text-gray-600">
+                Buy Now
+              </a>
+              <a href="#" className="hover:text-gray-600">
+                Scan Coupon
+              </a>
+              <a href="#" className="hover:text-gray-600">
+                How to Play
+              </a>
+              <a href="#" className="hover:text-gray-600">
+                Past Results
+              </a>
+              <a href="#" className="hover:text-gray-600">
+                Winners
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t mt-8 py-4 text-center bg-white">
+          <div className="flex justify-center space-x-4 text-black text-2xl md:text-4xl font-semibold tracking-tight">
+            {/* Room ID -{room[0].roomId} */}
+          </div>
+        </div>
+
+        <div
+          className="min-h-screen p-4 md:p-8 flex justify-center items-center bg-gradient-to-b from-purple-500 to-purple-700"
+          style={{ borderRadius: "20px" }}
+        >
+          <div className="bg-white p-4 md:p-8 rounded-lg shadow-lg w-full max-w-4xl">
+            {activeRoom && activeRoom.status === "open" ? (
+              <>
+                {/* Render dynamic components */}
+                {allSelectedValues.map((selectedDigit, index) => (
+                  <div key={index}>
+                    <NumberingButtons
+                      onRemove={() => handleRemoveClick(index)}
+                      onSelect={(newSelectedValues) =>
+                        updateSelectedValues(index, newSelectedValues)
+                      }
+                    />
+                    {allSelectedValues.length > 1 ? (
+                      <Button
+                        onClick={() => handleRemoveClick(index)}
+                        color="danger"
+                        style={{
+                          marginLeft: "10px",
+                          backgroundColor: "#f5365c",
+                          color: "white",
+                          borderRadius: "50%",
+                          margin: "9px",
+                          width: "60px",
+                          height: "60px",
+                          fontSize: "18px",
+                          border: "2px solid #ddd",
+                        }}
+                      >
+                        <i className="fa fa-trash-o" aria-hidden="true"></i>
+                      </Button>
+                    ) : (
+                      <Button
+                        disabled
+                        color="danger"
+                        style={{
+                          marginLeft: "10px",
+                          backgroundColor: "#f5365c",
+                          color: "white",
+                          borderRadius: "50%",
+                          margin: "9px",
+                          width: "60px",
+                          height: "60px",
+                          fontSize: "18px",
+                          border: "2px solid #ddd",
+                          opacity: 0.6,
+                          cursor: "not-allowed",
+                        }}
+                      >
+                        <i className="fa fa-trash-o" />
+                      </Button>
+                    )}
+                    <hr />
+                  </div>
+                ))}
+
+                {/* Bet Price Input */}
+                <div className="mb-4">
+                  <label>
+                    Bet Price (Min: 10, Max: 10000):
+                    <Input
+                      type="number"
+                      min="10"
+                      max="10000"
+                      value={betPrice}
+                      onChange={(e) => setBetPrice(e.target.value)}
+                      placeholder="Enter bet price"
+                    />
+                  </label>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="p-8 flex justify-center items-center">
+                  {/* <button
+              type="button"
+              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+              onClick={handleAddClick}
+            >
+              Add Digit
+            </button> */}
+                  <button
+                    type="button"
+                    className={`text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
+                      isBuyNowDisabled()
+                        ? "bg-gray-400"
+                        : "bg-blue-600 hover:bg-blue-700"
+                    }`}
+                    onClick={handleBuyNow}
+                    disabled={isBuyNowDisabled()}
+                  >
+                    {loading ? <Spinner size="sm" /> : "Buy Now"}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <p>No active rooms available.</p>
+            )}
+          </div>
+        </div>
+      </div>
+    </>
+  );
 }
 
-export default PickOne
+export default PickOne;
