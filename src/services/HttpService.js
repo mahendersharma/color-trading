@@ -1,39 +1,46 @@
-import axios from 'axios';
-import { removeUserFromLocalStorage } from '../utils/localStorage.js';
+import axios from 'axios'
+import {removeUserFromLocalStorage} from '../utils/localStorage.js';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL
+const BASE_URL= process.env.REACT_APP_BASE_URL || 'https://newsapplication-4-w2e0.onrender.com/api/admin/v1';
 
-const dashboardAxios = axios.create({
-  baseURL: BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-    'Cache-Control': 'no-store', // Prevent client-side caching
-  }
-});
+   const dashboardAxios = axios.create({
+           baseURL:BASE_URL,
+           headers: {
+            'Content-Type': 'application/json',
+          }
+    });
 
-// Request Interceptor
-dashboardAxios.interceptors.request.use((config) => {
-  const authToken = localStorage.getItem('authToken');
-  console.log("authToken", authToken);
+    dashboardAxios.interceptors.request.use((config) => {
+        const authToken = localStorage.getItem('authToken'); // Get the token as a string
+        console.log("authToken", authToken); // Log the token for debugging
+    
+        if (authToken) {
+            // Ensure headers object exists
+            if (!config.headers) {
+                config.headers = {};
+            }
+            config.headers.Authorization = `Bearer ${authToken}`;
+        }
+    
+        return config;
+    }, (error) => {
+        return Promise.reject(error);
+    });
+    
+    
 
-  if (authToken) {
-    config.headers.Authorization = `Bearer ${authToken}`;
-  }
-
-  return config;
-}, (error) => Promise.reject(error));
-
-// Response Interceptor
-dashboardAxios.interceptors.response.use((response) => response, (error) => {
-  if (error.response?.status === 401) {
-    removeUserFromLocalStorage();
-    window.location = '/login?message=Session Expired, Login Again';
-  } else if (error.response?.status === 400) {
-    removeUserFromLocalStorage();
-    window.location = '/login?message=Invalid Token, Login Again';
-  }
-
-  return Promise.reject(error);
-});
+    dashboardAxios.interceptors.response.use((response)=>{
+        return response
+    },(error)=>{
+        if(error.response?.status === 401){
+            removeUserFromLocalStorage()
+            window.location = '/login?message=Session Expired, Login Again'
+        }
+        else if(error.response?.status ===400){
+            removeUserFromLocalStorage()
+            window.location = '/login?message=Invalid Token, Login Again'
+        } 
+        return Promise.reject(error)
+    });
 
 export default dashboardAxios;

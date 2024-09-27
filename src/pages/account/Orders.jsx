@@ -34,9 +34,15 @@ const RoomList = () => {
             );
         });
 
-        // Cleanup socket connection
+        // Call socket every second
+        const intervalId = setInterval(() => {
+            socket.emit('requestRoomUpdates'); // Emit an event to request room updates from the server
+        }, 1000);
+
+        // Cleanup socket connection and interval
         return () => {
             socket.disconnect();
+            clearInterval(intervalId);
         };
     }, [socket]);
 
